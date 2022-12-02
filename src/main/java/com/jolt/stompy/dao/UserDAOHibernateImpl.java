@@ -2,7 +2,6 @@ package com.jolt.stompy.dao;
 
 import com.jolt.stompy.entity.User;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ public class UserDAOHibernateImpl implements UserDAO {
     }
 
     @Override
-    @Transactional
     public List<User> findAll() {
         // get current hibernate session
         Session currentSession = entityManager.unwrap(Session.class);
@@ -35,5 +33,37 @@ public class UserDAOHibernateImpl implements UserDAO {
 
         // return results
         return users;
+    }
+
+    @Override
+    public User findById(int id) {
+        // get current hibernate session
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        // get the user
+        User user = currentSession.get(User.class, id);
+
+        return user;
+    }
+
+    @Override
+    public void save(User user) {
+        // get current hibernate session
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        // save user
+        currentSession.saveOrUpdate(user);
+    }
+
+    @Override
+    public void deleteById(int id) {
+        // get the current hibernate session
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        // delete object with primary key
+        Query query = currentSession.createQuery(
+                "DELETE FROM users WHERE id=:userId");
+        query.setParameter("userId", id);
+        query.executeUpdate();
     }
 }
