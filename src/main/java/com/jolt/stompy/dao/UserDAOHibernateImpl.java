@@ -28,7 +28,7 @@ public class UserDAOHibernateImpl implements UserDAO {
         Session currentSession = entityManager.unwrap(Session.class);
 
         // create query
-        Query<User> query = currentSession.createQuery("from User", User.class);
+        Query<User> query = currentSession.createQuery("FROM User", User.class);
 
         // execute the query
         List<User> users = query.getResultList();
