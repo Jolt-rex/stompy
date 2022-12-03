@@ -46,4 +46,24 @@ public class UserRestController {
         return user;
     }
 
+    // update a user
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User user) {
+        userService.save(user);
+
+        return user;
+    }
+
+    // delete a user
+    @DeleteMapping("/users/{userId}")
+    public String deleteEmployee(@PathVariable int userId) {
+        User tempUser = userService.findById(userId);
+        if(tempUser == null) {
+            throw new RuntimeException("User ID not found - " + userId);
+        }
+
+        userService.deleteById(userId);
+
+        return "Removed User - " + tempUser;
+    }
 }

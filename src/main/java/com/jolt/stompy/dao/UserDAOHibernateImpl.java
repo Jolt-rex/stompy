@@ -61,7 +61,7 @@ public class UserDAOHibernateImpl implements UserDAO {
         Session currentSession = entityManager.unwrap(Session.class);
 
         // delete object with primary key
-        Query query = currentSession.createQuery(
+        Query query = currentSession.createNativeQuery(
                 "DELETE FROM users WHERE id=:userId", User.class);
         query.setParameter("userId", id);
         query.executeUpdate();
