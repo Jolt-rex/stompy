@@ -62,7 +62,7 @@ public class UserDAOHibernateImpl implements UserDAO {
 
         // delete object with primary key
         Query query = currentSession.createQuery(
-                "DELETE FROM users WHERE id=:userId");
+                "DELETE FROM users WHERE id=:userId", User.class);
         query.setParameter("userId", id);
         query.executeUpdate();
     }

@@ -1,11 +1,9 @@
 package com.jolt.stompy.rest;
 
-import com.jolt.stompy.dao.UserDAO;
 import com.jolt.stompy.entity.User;
+import com.jolt.stompy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -13,17 +11,39 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserRestController {
 
-    private UserDAO userDAO;
+    private UserService userService;
 
     // inject user dao
     @Autowired
-    public UserRestController(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public UserRestController(UserService userService) {
+        this.userService = userService;
     }
 
     // expose "/users" and return list of users
     @GetMapping("/users")
     public List<User> findAll() {
-        return userDAO.findAll();
+        return userService.findAll();
     }
+
+    // GET a single user
+    @GetMapping("/users/{userId}")
+    public User getUser(@PathVariable int userId) {
+        User user = userService.findById(userId);
+
+        if(user == null) {
+            throw new RuntimeException("User ID not found - " + userId);
+        }
+
+        return user;
+    }
+
+    // add new user
+    @PostMapping("/users")
+    public User addUser(@RequestBody User user) {
+        user.setId(0);
+        userService.save(user);
+
+        return user;
+    }
+
 }
