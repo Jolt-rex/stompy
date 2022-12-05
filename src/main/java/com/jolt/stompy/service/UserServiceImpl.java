@@ -1,45 +1,48 @@
 package com.jolt.stompy.service;
 
-import com.jolt.stompy.dao.UserDAO;
+import com.jolt.stompy.dao.UserRepository;
 import com.jolt.stompy.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("userDAOJpaImpl") UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    @Transactional
     public List<User> findAll() {
-        return userDAO.findAll();
+        return userRepository.findAll();
     }
 
     @Override
-    @Transactional
     public User findById(int id) {
-        return userDAO.findById(id);
+        Optional<User> result = userRepository.findById(id);
+
+        User user = null;
+        if(result.isPresent())
+            user = result.get();
+        else
+            throw new RuntimeException("Did not find user id - " + id);
+
+        return user;
     }
 
     @Override
-    @Transactional
     public void save(User user) {
-        userDAO.save(user);
+        userRepository.save(user);
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
-        userDAO.deleteById(id);
+        userRepository.deleteById(id);
     }
 }
