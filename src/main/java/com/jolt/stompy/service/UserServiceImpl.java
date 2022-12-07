@@ -1,6 +1,6 @@
 package com.jolt.stompy.service;
 
-import com.jolt.stompy.dao.UserRepository;
+import com.jolt.stompy.repository.UserRepository;
 import com.jolt.stompy.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Did not find user id - " + id);
 
         return user;
+    }
+
+    @Override
+    public List<User> findByProjectId(int id) {
+        return userRepository.findUsersByProjectsId(id);
     }
 
     @Override

@@ -1,7 +1,11 @@
 package com.jolt.stompy.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -9,7 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name="user_id")
     private int id;
 
     @Column(name="first_name")
@@ -23,6 +27,9 @@ public class User {
 
     @Column(name="password")
     private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
+    private Set<Project> projects = new HashSet<>();
 
     // constructors
     public User() {
