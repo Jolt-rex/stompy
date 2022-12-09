@@ -1,4 +1,4 @@
-package com.jolt.stompy.entity;
+package com.jolt.stompy.model;
 
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -43,6 +43,19 @@ public class Project {
         this.description = description;
         this.createdOn = createdOn;
         this.dueDate = dueDate;
+    }
+
+    public void addUser(User user) {
+        this.users.add(user);
+        user.getProjects().add(this);
+    }
+
+    public void removeUser(int userId) {
+        User user = this.users.stream().filter(usr -> usr.getId() == userId).findFirst().orElse(null);
+        if(user != null) {
+            this.users.remove(user);
+            user.getProjects().remove(this);
+        }
     }
 
     public int getId() {

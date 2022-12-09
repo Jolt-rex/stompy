@@ -1,10 +1,10 @@
-package com.jolt.stompy.entity;
+package com.jolt.stompy.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,6 +42,8 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+    public Set<Project> getProjects() { return this.projects; }
 
     public int getId() {
         return id;
