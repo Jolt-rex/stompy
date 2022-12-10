@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-public class UserRestController {
+public class UserController {
 
     @Autowired
     private UserRepository userRepository;
@@ -58,44 +58,52 @@ public class UserRestController {
     }
 
     // assign a user to a project
-    @PostMapping("/projects/{projectId}/users")
-    public ResponseEntity<Project> addUserToProject(@PathVariable(value="projectId") int projectId, @RequestBody User userRequest) {
-        Optional<Project> result = projectRepository.findById(projectId);
-        if(!result.isPresent())
+    @PostMapping("/projects/{projectId}/assignUser/{userId}")
+    public ResponseEntity<User> addUserToProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
+        Optional<Project> project = projectRepository.findById(projectId);
+        if(!project.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        Project project = result.get();
-
-        Optional<User> user = userRepository.findById(userRequest.getId());
+        Optional<User> user = userRepository.findById(userId);
         if(!user.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        project.addUser(user.get());
+        project.get().addUser(user.get());
+        userRepository.save(user.get());
 
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+    }
 
+    // change user password
+    @PutMapping("/users/changePassword/{id}")
+    public ResponseEntity<User> changePassword(@PathVariable("id") int id, @RequestBody String password) {
+        Optional<User> user = userRepository.findById(id);
+        if(!user.isPresent())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        user.get().setPassword(password);
+        userRepository.save(user.get());
+
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+    }
+
+    // remove a user from a project
+    @DeleteMapping("/projects/{projectId}/users/{userId}")
+    public ResponseEntity<User> removeUserFromProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
+        Optional<Project> project = projectRepository.findById(projectId);
+        if(!project.isPresent())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        project.get().removeUser(userId);
+        projectRepository.save(project.get());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // update a user
-    @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
-        userRepository.save(user);
-
-        return user;
-    }
-
-    // delete a user
-    @DeleteMapping("/users/{userId}")
-    public String deleteEmployee(@PathVariable int userId) {
-        Optional<User> tempUser = userRepository.findById(userId);
-        if(tempUser == null) {
-            throw new RuntimeException("User ID not found - " + userId);
-        }
-
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int userId) {
         userRepository.deleteById(userId);
 
-        return "Removed User - " + tempUser;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
