@@ -51,7 +51,7 @@ public class UserController {
     }
 
     // register a new user
-    @PostMapping("/users/register")
+    @PostMapping("/users/registerUser")
     public ResponseEntity<String> registerUser(@RequestBody User user) throws HttpClientErrorException.BadRequest {
         User userWithSameEmail = userRepository.findByEmail(user.getEmail());
         if(userWithSameEmail != null)
@@ -72,7 +72,7 @@ public class UserController {
 
     // assign a user to a project
     @PostMapping("/projects/{projectId}/assignUser/{userId}")
-    public ResponseEntity<User> addUserToProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
+    public ResponseEntity<String> addUserToProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
         Optional<Project> project = projectRepository.findById(projectId);
         if(!project.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -84,25 +84,32 @@ public class UserController {
         project.get().addUser(user.get());
         userRepository.save(user.get());
 
-        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        String response = "Assigned user " + user.get().getFirstName() + " " + user.get().getLastName() + " to project " + project.get().getName();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // change user password
     @PutMapping("/users/changePassword/{id}")
-    public ResponseEntity<User> changePassword(@PathVariable("id") int id, @RequestBody String password) {
+    public ResponseEntity<String> changePassword(@PathVariable("id") int id, @RequestBody String password) {
         Optional<User> user = userRepository.findById(id);
         if(!user.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         user.get().setPassword(password);
-        userRepository.save(user.get());
+        User newUser = userRepository.save(user.get());
 
-        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        HttpHeaders authHeader = new HttpHeaders();
+        authHeader.set("x-auth-token", generateJwt(newUser));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(authHeader)
+                .body("Changed password");
     }
 
     // remove a user from a project
-    @DeleteMapping("/projects/{projectId}/users/{userId}")
-    public ResponseEntity<User> removeUserFromProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
+    @DeleteMapping("/projects/{projectId}/removeUsers/{userId}")
+    public ResponseEntity<String> removeUserFromProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
         Optional<Project> project = projectRepository.findById(projectId);
         if(!project.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -110,7 +117,8 @@ public class UserController {
         project.get().removeUser(userId);
         projectRepository.save(project.get());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        String response = "Removed user from project " + project.get().getName();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/users/{id}")
