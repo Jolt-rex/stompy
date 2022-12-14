@@ -27,6 +27,17 @@ public class User {
     @Column(name="password")
     private String password;
 
+    @Column(name="is_admin")
+    private Boolean isAdmin;
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
     private Set<Project> projects = new HashSet<>();
 
@@ -35,11 +46,12 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName, String lastName, String email, String password, Boolean isAdmin) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     public Set<Project> getProjects() { return this.projects; }
@@ -91,7 +103,8 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", password='********" + '\'' +
+                ", password='*" + '\'' +
+                ", isAdmin='" + isAdmin + '\'' +
                 '}';
     }
 }

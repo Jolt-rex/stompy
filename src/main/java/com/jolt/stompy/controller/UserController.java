@@ -4,15 +4,19 @@ import com.jolt.stompy.model.Project;
 import com.jolt.stompy.model.User;
 import com.jolt.stompy.repository.ProjectRepository;
 import com.jolt.stompy.repository.UserRepository;
+import com.jolt.stompy.shared.Constants;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import javax.xml.bind.DatatypeConverter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -27,8 +31,7 @@ public class UserController {
     // expose "/users" and return list of users
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add);
+        List<User> users = userRepository.findAll();
 
         if(users.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -47,18 +50,24 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // add new user
-    @PostMapping("/users")
-    public ResponseEntity<String> addUser(@RequestBody User user) {
+    // register a new user
+    @PostMapping("/users/register")
+    public ResponseEntity<String> registerUser(@RequestBody User user) throws HttpClientErrorException.BadRequest {
         User userWithSameEmail = userRepository.findByEmail(user.getEmail());
         if(userWithSameEmail != null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         String encryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
-        User newUser = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), encryptedPassword));
+        User newUser = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), encryptedPassword, false));
 
-        return new ResponseEntity<>(newUser.getEmail(), HttpStatus.CREATED);
+        HttpHeaders authHeader = new HttpHeaders();
+        authHeader.set("x-auth-token", generateJwt(newUser));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(authHeader)
+                .body("Created new user");
     }
 
     // assign a user to a project
@@ -109,5 +118,19 @@ public class UserController {
         userRepository.deleteById(userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private String generateJwt(User user) {
+        long timestamp = System.currentTimeMillis();
+        byte[] apiKeyParsed = DatatypeConverter.parseBase64Binary(Constants.API_SECRET_KEY);
+        return Jwts.builder().signWith(SignatureAlgorithm.HS256, apiKeyParsed)
+                .setIssuedAt(new Date(timestamp))
+                .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
+                .claim("userId", user.getId())
+                .claim("email", user.getEmail())
+                .claim("firstName", user.getFirstName())
+                .claim("lastName", user.getLastName())
+                .claim("isAdmin", user.getAdmin())
+                .compact();
     }
 }
