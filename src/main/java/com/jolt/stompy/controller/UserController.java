@@ -7,6 +7,7 @@ import com.jolt.stompy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -48,13 +49,16 @@ public class UserController {
 
     // add new user
     @PostMapping("/users")
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public ResponseEntity<String> addUser(@RequestBody User user) {
         User userWithSameEmail = userRepository.findByEmail(user.getEmail());
         if(userWithSameEmail != null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        User newUser = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword()));
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        String encryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+
+        User newUser = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), encryptedPassword));
+
+        return new ResponseEntity<>(newUser.getEmail(), HttpStatus.CREATED);
     }
 
     // assign a user to a project
