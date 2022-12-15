@@ -4,9 +4,7 @@ import com.jolt.stompy.model.Project;
 import com.jolt.stompy.model.User;
 import com.jolt.stompy.repository.ProjectRepository;
 import com.jolt.stompy.repository.UserRepository;
-import com.jolt.stompy.shared.Constants;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.jolt.stompy.shared.Authorization;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import javax.xml.bind.DatatypeConverter;
 
 import java.util.*;
 
@@ -62,13 +59,15 @@ public class UserController {
         User newUser = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), encryptedPassword, false));
 
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.set("x-auth-token", generateJwt(newUser));
+        authHeader.set("x-auth-token", Authorization.generateJwt(newUser));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .headers(authHeader)
                 .body("Created new user");
     }
+
+
 
     // assign a user to a project
     @PostMapping("/projects/{projectId}/assignUser/{userId}")
@@ -99,7 +98,7 @@ public class UserController {
         User newUser = userRepository.save(user.get());
 
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.set("x-auth-token", generateJwt(newUser));
+        authHeader.set("x-auth-token", Authorization.generateJwt(newUser));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -126,19 +125,5 @@ public class UserController {
         userRepository.deleteById(userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private String generateJwt(User user) {
-        long timestamp = System.currentTimeMillis();
-        byte[] apiKeyParsed = DatatypeConverter.parseBase64Binary(Constants.API_SECRET_KEY);
-        return Jwts.builder().signWith(SignatureAlgorithm.HS256, apiKeyParsed)
-                .setIssuedAt(new Date(timestamp))
-                .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
-                .claim("userId", user.getId())
-                .claim("email", user.getEmail())
-                .claim("firstName", user.getFirstName())
-                .claim("lastName", user.getLastName())
-                .claim("isAdmin", user.getAdmin())
-                .compact();
     }
 }
