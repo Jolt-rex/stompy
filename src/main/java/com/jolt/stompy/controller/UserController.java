@@ -29,6 +29,7 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
+        users.forEach(user -> user.setPassword("*"));
 
         if(users.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -37,14 +38,15 @@ public class UserController {
     }
 
     // GET a single user
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable("userId") int userId) {
+    @GetMapping("/users/me")
+    public ResponseEntity<User> getUserById(@RequestAttribute(value="userId") int userId) {
         Optional<User> user = userRepository.findById(userId);
 
-        if(user.isPresent())
-            return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        if(!user.isPresent())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        user.get().setPassword("*");
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
     // register a new user
@@ -120,8 +122,8 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int userId) {
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("userId") int userId) {
         userRepository.deleteById(userId);
 
         return new ResponseEntity<>(HttpStatus.OK);

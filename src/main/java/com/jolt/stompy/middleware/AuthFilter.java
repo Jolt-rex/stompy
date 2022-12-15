@@ -19,6 +19,7 @@ public class AuthFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        System.out.println("Auth filter");
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = ( HttpServletResponse) servletResponse;
 
@@ -35,8 +36,9 @@ public class AuthFilter extends GenericFilterBean {
                     .setSigningKey(apiKeyParsed)
                     .parseClaimsJws(token)
                     .getBody();
-            httpRequest.setAttribute("userId", Integer.parseInt(claims.get("userID").toString()));
-            httpRequest.setAttribute("isAdmin", Boolean.parseBoolean(claims.get("isAdmin").toString()));
+
+            httpRequest.setAttribute("userId", (Integer) claims.get("userId"));
+            httpRequest.setAttribute("isAdmin", (Boolean) claims.get("isAdmin"));
         } catch (Exception ex) {
             httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid token");
             return;

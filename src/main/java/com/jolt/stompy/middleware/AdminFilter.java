@@ -19,6 +19,7 @@ public class AdminFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        System.out.println("Admin filter");
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = ( HttpServletResponse) servletResponse;
 
@@ -35,8 +36,8 @@ public class AdminFilter extends GenericFilterBean {
                     .setSigningKey(apiKeyParsed)
                     .parseClaimsJws(token)
                     .getBody();
-            Integer userId = Integer.parseInt(claims.get("userId").toString());
-            Boolean isAdmin = Boolean.parseBoolean(claims.get("isAdmin").toString());
+            Integer userId = (Integer) claims.get("userId");
+            Boolean isAdmin = (Boolean) claims.get("isAdmin");
 
             if(!isAdmin) {
                 httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Not authorised");
