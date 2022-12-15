@@ -26,6 +26,7 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> request) throws HttpClientErrorException.BadRequest {
         User user = userRepository.findByEmail(request.get("email"));
+
         if(user == null)
             return new ResponseEntity<>("Invalid email or password", HttpStatus.BAD_REQUEST);
 

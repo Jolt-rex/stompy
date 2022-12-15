@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     private ProjectRepository projectRepository;
 
-    // expose "/users" and return list of users
+    // expose "/users" and return list of users - must be admin
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -87,7 +87,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // change user password
+    // change user password - TODO change to Map in request body and move id to body from path
     @PutMapping("/users/changePassword/{id}")
     public ResponseEntity<String> changePassword(@PathVariable("id") int id, @RequestBody String password) {
         Optional<User> user = userRepository.findById(id);

@@ -1,5 +1,6 @@
 package com.jolt.stompy;
 
+import com.jolt.stompy.middleware.AdminFilter;
 import com.jolt.stompy.middleware.AuthFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,10 +15,19 @@ public class StompyApplication {
 	}
 
 	@Bean
-	public FilterRegistrationBean<AuthFilter> filterRegistrationBean() {
+	public FilterRegistrationBean<AuthFilter> authFilterRegistrationBean() {
 		FilterRegistrationBean<AuthFilter> registrationBean = new FilterRegistrationBean<>();
 		AuthFilter authFilter = new AuthFilter();
 		registrationBean.setFilter(authFilter);
+		registrationBean.addUrlPatterns("/api/users/changePassword/*");
+		return registrationBean;
+	}
+
+	@Bean
+	public FilterRegistrationBean<AdminFilter> adminFilterRegistrationBean() {
+		FilterRegistrationBean<AdminFilter> registrationBean = new FilterRegistrationBean<>();
+		AdminFilter adminFilter = new AdminFilter();
+		registrationBean.setFilter(adminFilter);
 		registrationBean.addUrlPatterns("/api/users");
 		return registrationBean;
 	}
