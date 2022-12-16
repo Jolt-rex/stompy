@@ -27,13 +27,7 @@ public class Project {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime createdOn;
 
-    @Column(name="due_date")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate dueDate;
 
-    @ManyToMany(fetch=FetchType.LAZY, cascade =  { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name="projects_users", joinColumns = { @JoinColumn(name="project_id") },
-            inverseJoinColumns = { @JoinColumn(name="user_id")})
     private Set<User> users = new HashSet<>();
 
     public Project() {};
@@ -51,7 +45,7 @@ public class Project {
     }
 
     public void removeUser(int userId) {
-        User user = this.users.stream().filter(usr -> usr.getId() == userId).findFirst().orElse(null);
+        User user = this.users.stream().filter(usr -> usr.getUserId() == userId).findFirst().orElse(null);
         if(user != null) {
             this.users.remove(user);
             user.getProjects().remove(this);

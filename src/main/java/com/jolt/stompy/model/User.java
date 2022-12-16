@@ -3,9 +3,6 @@ package com.jolt.stompy.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name="users")
 public class User {
@@ -13,13 +10,10 @@ public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="user_id")
-    private int id;
+    private int userId;
 
-    @Column(name="first_name")
-    private String firstName;
-
-    @Column(name="last_name")
-    private String lastName;
+    @Column(name="username")
+    private String username;
 
     @Column(name="email")
     private String email;
@@ -27,58 +21,31 @@ public class User {
     @Column(name="password")
     private String password;
 
-    @Column(name="is_admin")
-    private Boolean isAdmin;
+    @ManyToOne(fetch= FetchType.LAZY, optional = false)
+    @JoinColumn(name="role_id")
+    private Role role;
 
-    public Boolean getAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
-    }
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
-    private Set<Project> projects = new HashSet<>();
 
     // constructors
     public User() {
 
     }
 
-    public User(String firstName, String lastName, String email, String password, Boolean isAdmin) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
-        this.isAdmin = isAdmin;
     }
 
-    public Set<Project> getProjects() { return this.projects; }
+    public int getUserId() { return this.userId; }
 
-    public int getId() {
-        return id;
+    public void setUserId(int userId) { this.userId = userId; }
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+    public void setUsername(String username) { this.username = username; }
 
     public String getEmail() {
         return email;
@@ -96,15 +63,21 @@ public class User {
         this.password = password;
     }
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
     @Override
     public String toString() {
         return "User {" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                "id=" + userId +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='*" + '\'' +
-                ", isAdmin='" + isAdmin + '\'' +
                 '}';
     }
 }

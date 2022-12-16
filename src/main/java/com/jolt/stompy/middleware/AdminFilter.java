@@ -37,15 +37,15 @@ public class AdminFilter extends GenericFilterBean {
                     .parseClaimsJws(token)
                     .getBody();
             Integer userId = (Integer) claims.get("userId");
-            Boolean isAdmin = (Boolean) claims.get("isAdmin");
+            Integer roleId = (Integer) claims.get("roleId");
 
-            if(!isAdmin) {
+            if(roleId == 3) {
                 httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Not authorised");
                 return;
             }
 
             httpRequest.setAttribute("userId", userId);
-            httpRequest.setAttribute("isAdmin", isAdmin);
+            httpRequest.setAttribute("roleId", roleId);
         } catch (Exception ex) {
             httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid token");
             return;

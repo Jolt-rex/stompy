@@ -58,7 +58,7 @@ public class UserController {
 
         String encryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
-        User newUser = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), encryptedPassword, false));
+        User newUser = userRepository.save(new User(user.getUsername(), user.getEmail(), encryptedPassword));
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.set("x-auth-token", Authorization.generateJwt(newUser));
@@ -85,7 +85,7 @@ public class UserController {
         project.get().addUser(user.get());
         userRepository.save(user.get());
 
-        String response = "Assigned user " + user.get().getFirstName() + " " + user.get().getLastName() + " to project " + project.get().getName();
+        String response = "Assigned user " + user.get().getUsername() + " to project " + project.get().getName();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

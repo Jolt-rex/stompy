@@ -38,7 +38,7 @@ public class AuthFilter extends GenericFilterBean {
                     .getBody();
 
             httpRequest.setAttribute("userId", (Integer) claims.get("userId"));
-            httpRequest.setAttribute("isAdmin", (Boolean) claims.get("isAdmin"));
+            httpRequest.setAttribute("roleId", (Boolean) claims.get("roleId"));
         } catch (Exception ex) {
             httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid token");
             return;
