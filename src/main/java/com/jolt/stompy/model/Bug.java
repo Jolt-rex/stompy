@@ -1,8 +1,11 @@
 package com.jolt.stompy.model;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="bugs")
@@ -11,7 +14,11 @@ public class Bug {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="bug_id")
-    private int id;
+    private int bugId;
+
+    @ManyToOne(fetch= FetchType.LAZY, optional = false)
+    @JoinColumn(name="project_id")
+    private Project project;
 
     @Column(name="summary")
     private String summary;
@@ -19,72 +26,70 @@ public class Bug {
     @Column(name="description")
     private String description;
 
-    @Column(name="created_by_id")
-    private int raisedById;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="created_user_id")
+    private User createdByUser;
 
-    @Column(name="created_date")
-    private Date identifiedDate;
+    @Column(name="created_on")
+    private Date createdOn;
 
-    @Column(name="project_id")
-    private int projectId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="priority_id")
+    private BugPriority priority;
 
-    @Column(name="assigned_to_id")
-    private int assignedToId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="bug_status_id")
+    private BugStatus status;
 
-    @Column(name="status_id")
-    private int statusId;
+    @ManyToMany(mappedBy = "bugs")
+    private List<User> assignedUsers;
 
-    @Column(name="priority")
-    private int priority;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="bug_type_id")
+    private BugType type;
 
-    @Column(name="target_resolution_date")
-    private Date targetResolutionDate;
+    @Column(name="bug_version")
+    private String version;
 
-    @Column(name="progress")
-    private String progress;
-
-    @Column(name="is_resolved")
-    private boolean isResolved;
+    @Column(name="resolution_version")
+    private String resolutionVersion;
 
     @Column(name="resolution_date")
-    private Date resolutionDate;
-
-    @Column(name="resolution_summary")
-    private String resolutionSummary;
-
-    @Column(name="modified_on")
-    private Date modifiedOn;
-
-    @Column(name="modified_by")
-    private String modifiedBy;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime resolutionDate;
 
     public Bug() {}
 
-    public Bug(int id, String summary, String description, int raisedById, Date identifiedDate, int projectId, int assignedToId, int statusId, int priority, Date targetResolutionDate, String progress, boolean isResolved, Date resolutionDate, String resolutionSummary, Date modifiedOn, String modifiedBy) {
-        this.id = id;
+    public Bug(int bugId, Project project, String summary, String description, User createdByUser, Date createdOn, BugPriority priority, BugStatus status, List<User> assignedUsers, BugType type, String version, String resolutionVersion, LocalDateTime resolutionDate) {
+        this.bugId = bugId;
+        this.project = project;
         this.summary = summary;
         this.description = description;
-        this.raisedById = raisedById;
-        this.identifiedDate = identifiedDate;
-        this.projectId = projectId;
-        this.assignedToId = assignedToId;
-        this.statusId = statusId;
+        this.createdByUser = createdByUser;
+        this.createdOn = createdOn;
         this.priority = priority;
-        this.targetResolutionDate = targetResolutionDate;
-        this.progress = progress;
-        this.isResolved = isResolved;
+        this.status = status;
+        this.assignedUsers = assignedUsers;
+        this.type = type;
+        this.version = version;
+        this.resolutionVersion = resolutionVersion;
         this.resolutionDate = resolutionDate;
-        this.resolutionSummary = resolutionSummary;
-        this.modifiedOn = modifiedOn;
-        this.modifiedBy = modifiedBy;
     }
 
-    public int getId() {
-        return id;
+    public int getBugId() {
+        return bugId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setBugId(int bugId) {
+        this.bugId = bugId;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public String getSummary() {
@@ -103,107 +108,75 @@ public class Bug {
         this.description = description;
     }
 
-    public int getRaisedById() {
-        return raisedById;
+    public User getCreatedByUser() {
+        return createdByUser;
     }
 
-    public void setRaisedById(int raisedById) {
-        this.raisedById = raisedById;
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
     }
 
-    public Date getIdentifiedDate() {
-        return identifiedDate;
+    public Date getCreatedOn() {
+        return createdOn;
     }
 
-    public void setIdentifiedDate(Date identifiedDate) {
-        this.identifiedDate = identifiedDate;
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
     }
 
-    public int getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
-    }
-
-    public int getAssignedToId() {
-        return assignedToId;
-    }
-
-    public void setAssignedToId(int assignedToId) {
-        this.assignedToId = assignedToId;
-    }
-
-    public int getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
-    }
-
-    public int getPriority() {
+    public BugPriority getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(BugPriority priority) {
         this.priority = priority;
     }
 
-    public Date getTargetResolutionDate() {
-        return targetResolutionDate;
+    public BugStatus getStatus() {
+        return status;
     }
 
-    public void setTargetResolutionDate(Date targetResolutionDate) {
-        this.targetResolutionDate = targetResolutionDate;
+    public void setStatus(BugStatus status) {
+        this.status = status;
     }
 
-    public String getProgress() {
-        return progress;
+    public List<User> getAssignedUsers() {
+        return assignedUsers;
     }
 
-    public void setProgress(String progress) {
-        this.progress = progress;
+    public void setAssignedUsers(List<User> assignedUsers) {
+        this.assignedUsers = assignedUsers;
     }
 
-    public boolean isResolved() {
-        return isResolved;
+    public BugType getType() {
+        return type;
     }
 
-    public void setResolved(boolean resolved) {
-        isResolved = resolved;
+    public void setType(BugType type) {
+        this.type = type;
     }
 
-    public Date getResolutionDate() {
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getResolutionVersion() {
+        return resolutionVersion;
+    }
+
+    public void setResolutionVersion(String resolutionVersion) {
+        this.resolutionVersion = resolutionVersion;
+    }
+
+    public LocalDateTime getResolutionDate() {
         return resolutionDate;
     }
 
-    public void setResolutionDate(Date resolutionDate) {
+    public void setResolutionDate(LocalDateTime resolutionDate) {
         this.resolutionDate = resolutionDate;
-    }
-
-    public String getResolutionSummary() {
-        return resolutionSummary;
-    }
-
-    public void setResolutionSummary(String resolutionSummary) {
-        this.resolutionSummary = resolutionSummary;
-    }
-
-    public Date getModifiedOn() {
-        return modifiedOn;
-    }
-
-    public void setModifiedOn(Date modifiedOn) {
-        this.modifiedOn = modifiedOn;
-    }
-
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
     }
 }

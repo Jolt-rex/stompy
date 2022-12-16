@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="project_id")
-    private int id;
+    private int projectId;
 
     @Column(name="name")
     private String name;
@@ -27,8 +28,11 @@ public class Project {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime createdOn;
 
+    @Column(name="version")
+    private String version;
 
-    private Set<User> users = new HashSet<>();
+    @OneToMany(mappedBy = "project")
+    List<Bug> bugs;
 
     public Project() {};
 
@@ -36,24 +40,10 @@ public class Project {
         this.name = name;
         this.description = description;
         this.createdOn = createdOn;
-        this.dueDate = dueDate;
     }
 
-    public void addUser(User user) {
-        this.users.add(user);
-        user.getProjects().add(this);
-    }
-
-    public void removeUser(int userId) {
-        User user = this.users.stream().filter(usr -> usr.getUserId() == userId).findFirst().orElse(null);
-        if(user != null) {
-            this.users.remove(user);
-            user.getProjects().remove(this);
-        }
-    }
-
-    public int getId() {
-        return id;
+    public int getProjectId() {
+        return projectId;
     }
 
     public String getName() {
@@ -78,11 +68,5 @@ public class Project {
         this.createdOn = createdOn;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
 }

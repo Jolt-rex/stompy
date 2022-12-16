@@ -3,30 +3,30 @@ package com.jolt.stompy.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="status")
-public class Status {
+@Table(name="bug_status")
+public class BugStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="status_id")
-    private int id;
+    @Column(name="bug_status_id")
+    private int bugStatusId;
 
     @Column(name="status")
     private String status;
 
-    public Status() {}
+    public BugStatus() {}
 
-    public Status(int id, String status) {
-        this.id = id;
+    public BugStatus(int id, String status) {
+        this.bugStatusId = id;
         this.status = status;
     }
 
     public int getId() {
-        return id;
+        return bugStatusId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.bugStatusId = id;
     }
 
     public String getStatus() {

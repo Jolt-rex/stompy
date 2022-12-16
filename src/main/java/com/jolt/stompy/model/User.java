@@ -3,6 +3,8 @@ package com.jolt.stompy.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 public class User {
@@ -25,6 +27,13 @@ public class User {
     @JoinColumn(name="role_id")
     private Role role;
 
+    @ManyToMany
+    @JoinTable(
+        name="bugs_users",
+        joinColumns = @JoinColumn(name="user_id"),
+        inverseJoinColumns = @JoinColumn(name="bug_id")
+    )
+    private List<Bug> bugs;
 
     // constructors
     public User() {
