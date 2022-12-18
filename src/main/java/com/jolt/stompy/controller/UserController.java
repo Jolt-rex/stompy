@@ -43,10 +43,11 @@ public class UserController {
 
     // GET a single user
     @GetMapping("/me")
-    @ResponseBody
     public ResponseEntity<Map<String, String>> getUserById(@RequestAttribute("id") Integer id) {
         System.out.println(id);
         Optional<User> user = userRepository.findById(id);
+
+        System.out.println(user);
 
         if(!user.isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -55,7 +56,7 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
         response.put("username", user.get().getUsername());
         response.put("email", user.get().getEmail());
-        response.put("role", user.get().getRole());
+        response.put("role", user.get().getRole().getName());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

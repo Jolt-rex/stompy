@@ -7,14 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-
-    //List<User> findUsersByProjectsId(int id);
-//
-//    @Query(value = "SELECT * FROM users u INNER JOIN roles r ON u.role_id=r.role_id WHERE u.email=:email", nativeQuery = true)
-//    User findByEmail(@Param("email") String email);
 
     User findByEmail(String email);
 

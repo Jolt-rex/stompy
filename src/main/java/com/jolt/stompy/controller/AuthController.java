@@ -25,7 +25,6 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> request) throws HttpClientErrorException.BadRequest {
-        System.out.println(request);
         User user = userRepository.findByEmail(request.get("email"));
 
         if(user == null)
@@ -34,7 +33,6 @@ public class AuthController {
         if(!BCrypt.checkpw(request.get("password"), user.getPassword()))
             return new ResponseEntity<>("Invalid email or password", HttpStatus.BAD_REQUEST);
 
-        System.out.println(user);
         String jwt = Authorization.generateJwt(user);
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.set("x-auth-token", Authorization.generateJwt(user));
