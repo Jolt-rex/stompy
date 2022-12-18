@@ -8,25 +8,25 @@ public class BugPriority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="priority_id")
-    private int priorityId;
+    @Column(name="id")
+    private int id;
 
     @Column(name="name")
     private String name;
 
     public BugPriority() {};
 
-    public BugPriority(int priorityId, String name) {
-        this.priorityId = priorityId;
+    public BugPriority(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public int getPriorityId() {
-        return priorityId;
+    public int getId() {
+        return id;
     }
 
-    public void setPriorityId(int priorityId) {
-        this.priorityId = priorityId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

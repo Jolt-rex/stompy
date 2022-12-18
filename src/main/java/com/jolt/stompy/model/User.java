@@ -2,6 +2,7 @@ package com.jolt.stompy.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 
 import java.util.List;
 
@@ -11,19 +12,20 @@ public class User {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="user_id")
-    private int userId;
+    @Column(name="id")
+    private Integer id;
 
     @Column(name="username")
     private String username;
 
     @Column(name="email")
+    @Email
     private String email;
 
     @Column(name="password")
     private String password;
 
-    @ManyToOne(fetch= FetchType.LAZY, optional = false)
+    @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="role_id")
     private Role role;
 
@@ -40,15 +42,16 @@ public class User {
 
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, Role role) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public int getUserId() { return this.userId; }
+    public Integer getId() { return this.id; }
 
-    public void setUserId(int userId) { this.userId = userId; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getUsername() {
         return username;
@@ -72,21 +75,30 @@ public class User {
         this.password = password;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(Role role) { this.role = role; }
+
+    public String getRole() { return role; }
+
+    public List<Bug> getBugs() {
+        return bugs;
     }
 
-    public Role getRole() {
-        return role;
+    public void setBugs(List<Bug> bugs) {
+        this.bugs = bugs;
+    }
+
+    public void assignBug(Bug bug) {
+        this.bugs.add(bug);
     }
 
     @Override
     public String toString() {
         return "User {" +
-                "id=" + userId +
+                "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='*" + '\'' +
+                ", role='" + role.getName() + '\'' +
                 '}';
     }
 }

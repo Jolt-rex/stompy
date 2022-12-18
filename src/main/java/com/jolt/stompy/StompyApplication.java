@@ -19,7 +19,7 @@ public class StompyApplication {
 		FilterRegistrationBean<AuthFilter> registrationBean = new FilterRegistrationBean<>();
 		AuthFilter authFilter = new AuthFilter();
 		registrationBean.setFilter(authFilter);
-		registrationBean.addUrlPatterns("/api/users/changePassword/*");
+		registrationBean.addUrlPatterns("/api/users/changePassword");
 		registrationBean.addUrlPatterns("/api/users/me");
 		return registrationBean;
 	}

@@ -14,10 +14,10 @@ public class Authorization {
         return Jwts.builder().signWith(SignatureAlgorithm.HS256, apiKeyParsed)
                 .setIssuedAt(new Date(timestamp))
                 .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
-                .claim("userId", user.getUserId())
+                .claim("id", user.getId())
                 .claim("email", user.getEmail())
                 .claim("username", user.getUsername())
-                .claim("role", user.getRole())
+                .claim("role", user.getRole().getName())
                 .compact();
     }
 }

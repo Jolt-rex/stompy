@@ -5,9 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name="projects")
@@ -15,8 +13,8 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="project_id")
-    private int projectId;
+    @Column(name="id")
+    private int id;
 
     @Column(name="name")
     private String name;
@@ -42,8 +40,8 @@ public class Project {
         this.createdOn = createdOn;
     }
 
-    public int getProjectId() {
-        return projectId;
+    public int getId() {
+        return id;
     }
 
     public String getName() {

@@ -1,5 +1,6 @@
 package com.jolt.stompy.middleware;
 
+import com.jolt.stompy.model.Role;
 import com.jolt.stompy.shared.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +22,7 @@ public class AuthFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         System.out.println("Auth filter");
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-        HttpServletResponse httpResponse = ( HttpServletResponse) servletResponse;
+        HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
         String token = httpRequest.getHeader("x-auth-token");
 
@@ -37,8 +38,8 @@ public class AuthFilter extends GenericFilterBean {
                     .parseClaimsJws(token)
                     .getBody();
 
-            httpRequest.setAttribute("userId", (Integer) claims.get("userId"));
-            httpRequest.setAttribute("roleId", (Boolean) claims.get("roleId"));
+            httpRequest.setAttribute("id", (Integer) claims.get("id"));
+            httpRequest.setAttribute("role", (String) claims.get("role"));
         } catch (Exception ex) {
             httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid token");
             return;

@@ -1,6 +1,7 @@
 package com.jolt.stompy.controller;
 
 import com.jolt.stompy.model.Project;
+import com.jolt.stompy.model.User;
 import com.jolt.stompy.repository.ProjectRepository;
 import com.jolt.stompy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/projects")
 public class ProjectController {
 
     @Autowired
@@ -21,14 +22,14 @@ public class ProjectController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/projects")
+    @GetMapping("/")
     public ResponseEntity<List<Project>> findAllProjects() {
         List<Project> projects = projectRepository.findAll();
 
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
-    @GetMapping("/projects/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Project> findById(@PathVariable("id") int id) {
         Optional<Project> project = projectRepository.findById(id);
 
@@ -38,7 +39,7 @@ public class ProjectController {
         return new ResponseEntity<>(project.get(), HttpStatus.OK);
     }
 
-    @PostMapping("/projects")
+    @PostMapping("/")
     public ResponseEntity<String> addProject(@RequestBody Project projectReq) {
         Project project = projectRepository.findProjectByName(projectReq.getName());
         if(project != null)
@@ -51,7 +52,7 @@ public class ProjectController {
         return new ResponseEntity<>("Project added", HttpStatus.OK);
     }
 
-    @PutMapping("/projects/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Project> updateProject(@PathVariable("id") int id, @RequestBody Project projectReq) {
         Optional<Project> project = projectRepository.findById(id);
         if(!project.isPresent())
@@ -67,7 +68,7 @@ public class ProjectController {
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 
-    @DeleteMapping("/projects/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteProject(@PathVariable("id") int id) {
         projectRepository.deleteById(id);
 

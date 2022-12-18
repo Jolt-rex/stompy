@@ -2,33 +2,31 @@ package com.jolt.stompy.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name="roles")
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="role_id")
-    private int roleId;
+    @Column(name="id")
+    private int id;
 
     @Column(name="name")
     private String name;
 
     public Role() { }
 
-    public Role(int roleId, String name) {
-        this.roleId = roleId;
+    public Role(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public int getId() {
+        return id;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

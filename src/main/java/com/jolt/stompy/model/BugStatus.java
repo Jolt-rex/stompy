@@ -8,8 +8,8 @@ public class BugStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="bug_status_id")
-    private int bugStatusId;
+    @Column(name="id")
+    private int id;
 
     @Column(name="status")
     private String status;
@@ -17,16 +17,16 @@ public class BugStatus {
     public BugStatus() {}
 
     public BugStatus(int id, String status) {
-        this.bugStatusId = id;
+        this.id = id;
         this.status = status;
     }
 
     public int getId() {
-        return bugStatusId;
+        return id;
     }
 
     public void setId(int id) {
-        this.bugStatusId = id;
+        this.id = id;
     }
 
     public String getStatus() {

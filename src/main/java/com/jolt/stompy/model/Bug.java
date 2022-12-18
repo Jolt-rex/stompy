@@ -44,7 +44,7 @@ public class Bug {
     @ManyToMany(mappedBy = "bugs")
     private List<User> assignedUsers;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="bug_type_id")
     private BugType type;
 

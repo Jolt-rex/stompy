@@ -1,5 +1,6 @@
 package com.jolt.stompy.middleware;
 
+import com.jolt.stompy.model.Role;
 import com.jolt.stompy.shared.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -37,15 +38,15 @@ public class AdminFilter extends GenericFilterBean {
                     .parseClaimsJws(token)
                     .getBody();
             Integer userId = (Integer) claims.get("userId");
-            Integer roleId = (Integer) claims.get("roleId");
+            String role = (String) claims.get("role");
 
-            if(roleId == 3) {
+            if(role != "admin") {
                 httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Not authorised");
                 return;
             }
 
             httpRequest.setAttribute("userId", userId);
-            httpRequest.setAttribute("roleId", roleId);
+            httpRequest.setAttribute("role", role);
         } catch (Exception ex) {
             httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid token");
             return;

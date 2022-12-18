@@ -8,25 +8,25 @@ public class BugType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="bug_type_id")
-    private int bugTypeId;
+    @Column(name="id")
+    private int id;
 
     @Column(name="name")
     private String name;
 
     public BugType() {}
 
-    public BugType(int bugTypeId, String name) {
-        this.bugTypeId = bugTypeId;
+    public BugType(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public int getBugTypeId() {
-        return bugTypeId;
+    public int getId() {
+        return id;
     }
 
-    public void setBugTypeId(int bugTypeId) {
-        this.bugTypeId = bugTypeId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
