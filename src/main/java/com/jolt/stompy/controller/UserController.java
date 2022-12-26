@@ -17,6 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -76,13 +77,9 @@ public class UserController {
 
         User newUser = userRepository.save(new User(user.getUsername(), user.getEmail(), encryptedPassword, role.get()));
 
-        HttpHeaders authHeader = new HttpHeaders();
-        authHeader.set("x-auth-token", Authorization.generateJwt(newUser));
-
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .headers(authHeader)
-                .body("Created new user");
+                .body(Authorization.generateJwt(newUser));
     }
 
     // change user password
